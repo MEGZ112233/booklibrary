@@ -1,35 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-let data = [
-  {
-    id: 1, name: 'john Due', age: 30
-  }
-  ,
-  {
-    id: 2, name: 'jane Smith', age: 25
-  }
-  ,
-  {
-    id: 3, name: 'ahmed magdy', age: 22
-  }
-  ,
-  {
-    id: 4, name: 'asmaa magdy', age: 25
-  }
-  ,
-  {
-    id: 5, name: 'mohamed magdy', age: 16
-  }
-  ,
-  {
-    id: 6, name: 'sahar mohamed', age: 55
-  }
-  ,
-  {
-    id: 7, name: 'magdy ali', age: 62
-  }
-];
 
 // Get all the users 
 router.get('/users', (req, res) => {
