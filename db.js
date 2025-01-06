@@ -8,11 +8,4 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,     
     port: process.env.DB_PORT,            
 });
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('Error connecting to the database', err.stack);
-    } else {
-        console.log('Database connected:', res.rows[0]);
-    }
-    pool.end();
-});
+module.exports = pool;
