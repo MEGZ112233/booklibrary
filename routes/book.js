@@ -19,7 +19,7 @@ router.get('/book', async (req, res) => {
     }
 });
 
-router.post('/book_ADD', async (req, res) => {
+router.post('/book', async (req, res) => {
     const requiredFields = ['title', 'author', 'isbn', 'number_of_books', 'price_per_day', 'year_of_publishing'];
     const validationMsg = validateFields(requiredFields, req.body);
     if (validationMsg !== "ok") {
@@ -28,10 +28,11 @@ router.post('/book_ADD', async (req, res) => {
     try {
         const { title, author, isbn, number_of_books, price_per_day, year_of_publishing } = req.body;
         const result = await pool.query(`INSERT INTO book (title, author , isbn, number_of_books , price_per_day,year_of_publishing) VALUES ($1,$2,$3,$4,$5,$6) returning *`,[title,author,isbn,number_of_books,price_per_day,year_of_publishing]); 
-        res.json(result.rows[0]);
+        res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
+router.delete('/book', )
 module.exports = router;

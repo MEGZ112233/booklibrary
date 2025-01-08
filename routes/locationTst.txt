@@ -1,0 +1,103 @@
+
+==================================
+Tests for Location API
+==================================
+
+1. Test: Fetch all locations
+----------------------------------
+   Method: GET
+   Endpoint: /location
+   Expected Status: 200 OK
+   Description: This test retrieves all locations. Ensure the response is an array of location objects.
+   Example Response: 
+   [
+       { "location_id": 1, "location_capacity": 5 },
+       { "location_id": 2, "location_capacity": 10 }
+   ]
+
+2. Test: Add a valid location
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 5 }
+   Expected Status: 201 Created
+   Description: This test adds a new location with a valid capacity. Ensure the response contains the new location object.
+   Example Response:
+   { "location_id": 3, "location_capacity": 5 }
+
+3. Test: Add a maximum valid location capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 10000 }
+   Expected Status: 201 Created
+   Description: Test adding a location with the maximum allowed capacity.
+   Example Response:
+   { "location_id": 4, "location_capacity": 10000 }
+
+4. Test: Add a duplicate location capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 5 }
+   Expected Status: 201 Created
+   Description: Test adding a location with a capacity that already exists. Ensure duplicate capacities are allowed.
+
+5. Test: Add a location with zero capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 0 }
+   Expected Status: 400 Bad Request
+   Description: Test with invalid capacity (zero). Ensure validation is triggered.
+
+6. Test: Add a location with negative capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": -10 }
+   Expected Status: 400 Bad Request
+   Description: Test with invalid capacity (negative). Ensure validation is triggered.
+
+7. Test: Add a location with non-integer capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": "invalid" }
+   Expected Status: 400 Bad Request
+   Description: Test with invalid capacity (non-numeric string). Ensure validation is triggered.
+
+8. Test: Add a location without a payload
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: {}
+   Expected Status: 400 Bad Request
+   Description: Test without providing the required payload field. Ensure validation detects the missing field.
+
+9. Test: Add a location with excessively large capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 1000000 }
+   Expected Status: 400 Bad Request
+   Description: Test adding a location with capacity exceeding the maximum allowed value.
+
+10. Test: Add a location with fractional capacity
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "location_capacity": 5.5 }
+   Expected Status: 400 Bad Request
+   Description: Test adding a location with a fractional value. Ensure validation is triggered.
+
+11. Test: delete a location with id
+----------------------------------
+   Method: POST
+   Endpoint: /location
+   Payload: { "id": 5 }
+   Expected Status: 204
+   Description: Test deleting functionality a location with a fractional value. Ensure validation is triggered.
+==================================
+End of Tests
+==================================
