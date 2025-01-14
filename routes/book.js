@@ -43,10 +43,9 @@ async function searchBook(title, author, isbn, limit) {
 }
 router.get('/book/search', async (req, res) => {
     const { title, author, isbn } = req.body;
-    console.log(title);
+
     try {
         const book = await searchBook(title, author, isbn, 1);
-        console.log(book);
         if (book.length === 0) {
             return res.status(404).send('no book found');
         }
@@ -98,18 +97,57 @@ router.delete('/book', async (req, res) => {
     if (values.length === 0) {
         return res.status(400).send('please you should provide [isbn] OR [title  ,author]');
     }
-    console.log(query) ; 
-    console.log(values) ; 
     try {
-        const result  = await pool.query(query, values);
+        const result = await pool.query(query, values);
         if (result.rowCount === 0) {
             return res.status(404).send('no book found');
         }
         res.status(200).send('Book deleted successfully.');
     } catch (err) {
-        console.log('mo salah') ; 
         console.error(err.message);
         return res.status(500).send(err.message);
+    }
+});
+router.put('/book', async (req, res) => {
+    const { title, author, isbn, number_of_books, price_per_day, year_of_publishing } = req.body;
+    let query = "UPDATE book SET ";
+    let values = [] ; 
+    try {
+        const mybook = await searchBook(title, author, isbn, 1);
+        if (mybook.length === 0) {
+            return res.status(404).send('no found book with this criteria to update');
+        }
+        const book_id = mybook[0].book_id;
+        if (isbn && checkInteger(isbn, true)) {
+            if (values.length !== 0) query += ' , ';
+            values.push(isbn);
+            query += 'isbn = $' + (values.length);
+        }
+        if (number_of_books && checkInteger(number_of_books, true)) {
+            if (values.length !== 0) query += ' , ';
+            values.push(number_of_books);
+            query += ' number_of_books = $' + (values.length);
+        }
+        if (price_per_day && Number(price_per_day) > 0.0) {
+            if (values.length !== 0) query += ' , ';
+            values.push(price_per_day);
+            query += 'price_per_day  =  $' + values.length;
+        }
+        if (year_of_publishing && checkInteger(year_of_publishing)) {
+            if (values.length !== 0) query += ' , ';
+            values.push(year_of_publishing);
+            query += 'year_of_publishing  =  $' + values.length;
+        }
+        if (values.length === 0) {
+            return res.status(400).send('no details to update');
+        }
+        values.push(book_id);
+        query += ' where book_id = $' + values.length;
+        pool.query(query, values);
+        res.status(200).send('ypdated succfully');
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send(err.message);
     }
 });
 module.exports = router;
