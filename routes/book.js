@@ -83,8 +83,8 @@ router.post('/book', async (req, res) => {
 });
 router.delete('/book', async (req, res) => {
     const { title, author, isbn } = req.body;
-    const query = 'DELETE FROM book WHERE ';
-    const values = [];
+    let query = 'DELETE FROM book WHERE ';
+    let values = [];
 
     if (isbn) {
         query += 'isbn = $1';
@@ -98,16 +98,18 @@ router.delete('/book', async (req, res) => {
     if (values.length === 0) {
         return res.status(400).send('please you should provide [isbn] OR [title  ,author]');
     }
+    console.log(query) ; 
+    console.log(values) ; 
     try {
-        const res = await pool.query(query, values);
+        const result  = await pool.query(query, values);
         if (result.rowCount === 0) {
             return res.status(404).send('no book found');
         }
         res.status(200).send('Book deleted successfully.');
     } catch (err) {
+        console.log('mo salah') ; 
         console.error(err.message);
         return res.status(500).send(err.message);
     }
 });
-router.delete('/book',)
 module.exports = router;
