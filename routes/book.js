@@ -1,56 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-
-function validateFields(requiredFields, reqBody) {
-    const missingFields = requiredFields.filter(field => !reqBody[field] || reqBody[field].toString().trim() === '');
-    return missingFields.length === 0
-        ? "ok"
-        : `Missing or empty fields: ${missingFields.join(', ')}`;
-}
-function checkInteger(input, pos = false) {
-    const num = Number(input);
-    return Number.isInteger(num) && String(num) == String(input) && (!pos || num > 0);
-}
-
-async function searchBook(title, author, isbn, limit) {
-    let query = 'SELECT * FROM book WHERE';
-    const values = [];
-    if (isbn) {
-        query += ' isbn = $1';
-        values.push(isbn);
-    }
-    else if (title) {
-        query += ' title = $1';
-        values.push(title);
-        if (author) {
-            query += ' AND author = $2';
-            values.push(author);
-        }
-    } else {
-        throw new Error('Either ISBN or Title should be provided');
-    }
-    if (limit && checkInteger(limit, true)) {
-        query += 'LIMIT $' + (values.length + 1);
-        values.push(limit);
-    }
-    try {
-        const result = await pool.query(query, values);
-        return result.rows;
-    } catch (err) {
-        throw new Error('Error executing search query');
-    }
-}
+const CustomError = require('../utils/CustomError');
+const { validateFields, checkInteger, searchBook } = require('../utils/helper');
 router.get('/book/search', async (req, res) => {
     const { title, author, isbn } = req.body;
-
     try {
         const book = await searchBook(title, author, isbn, 1);
         if (book.length === 0) {
-            return res.status(404).send('no book found');
+            return res.status(404).send('Book not found.');
         }
         res.status(200).json(book);
     } catch (err) {
+
         console.error(err.message);
         res.status(500).send(err.message);
     }
@@ -95,7 +57,7 @@ router.delete('/book', async (req, res) => {
         values.push(author);
     }
     if (values.length === 0) {
-        return res.status(400).send('please you should provide [isbn] OR [title  ,author]');
+        return res.status(400).send('please you should provide [isbn] OR [title ,author]');
     }
     try {
         const result = await pool.query(query, values);
@@ -111,11 +73,11 @@ router.delete('/book', async (req, res) => {
 router.put('/book', async (req, res) => {
     const { title, author, isbn, number_of_books, price_per_day, year_of_publishing } = req.body;
     let query = "UPDATE book SET ";
-    let values = [] ; 
+    let values = [];
     try {
         const mybook = await searchBook(title, author, isbn, 1);
         if (mybook.length === 0) {
-            return res.status(404).send('no found book with this criteria to update');
+            return res.status(404).send('Book not found');
         }
         const book_id = mybook[0].book_id;
         if (isbn && checkInteger(isbn, true)) {
@@ -139,15 +101,17 @@ router.put('/book', async (req, res) => {
             query += 'year_of_publishing  =  $' + values.length;
         }
         if (values.length === 0) {
-            return res.status(400).send('no details to update');
+            return res.status(404).send('No details to update');
         }
         values.push(book_id);
         query += ' where book_id = $' + values.length;
         pool.query(query, values);
-        res.status(200).send('ypdated succfully');
+        res.status(200).send('updated succfully');
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send(err.message);
+        if (err instanceof CustomError) {
+            res.status(err.statusCode).send(err.message);
+        } else
+            res.status(500).send(err.message);
     }
 });
 module.exports = router;
