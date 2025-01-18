@@ -1,0 +1,173 @@
+test1 : get all the book_topic 
+Method = GET 
+ http://localhost:3000/api/book_topic
+ body {
+
+ }
+ expected value {
+    all the table content 
+    body{
+        
+    }
+ }
+
+
+test2 : get specfic book 
+http://localhost:3000/api/book_topic
+Method = GET 
+ body{
+
+    "isbn" : "9780140268867" , 
+    "topic" : "comedy"
+}
+expected value {
+    {
+        "book_id": 9,
+        "topic": "comedy"
+    }
+}
+
+
+test3 : get all the book of specfic topic .
+http://localhost:3000/api/book_topic
+Method = GET 
+body{
+{
+    "topic" : "comedy"
+}
+
+}
+expected value {
+   {
+        "book_id": 8,
+        "topic": "comedy"
+    },
+    {
+        "book_id": 9,
+        "topic": "comedy"
+    }  
+}
+TEST4 : INVALID INPUTE 
+http://localhost:3000/api/book_topic
+Method :  post 
+body {
+
+}
+Status code = 400 
+expected value{
+    the topic must be provided
+}
+
+
+TEST5 : INVALID INPUTE 
+http://localhost:3000/api/book_topic
+Method :  post 
+body {
+    "topic" : "comedy"
+}
+Status code = 400 
+expected value{
+    Either ISBN or Title must be provided
+}
+
+TEST6 : inserting a book topic  does not exist 
+http://localhost:3000/api/book_topic
+Method :  post 
+body {
+ "topic" : "comedy" , 
+ "isbn" : "11233"
+}
+Status code = 404 
+expected value{
+this book does not exist
+}
+
+TEST7 : inserting a book topic 
+http://localhost:3000/api/book_topic
+Method :  post 
+body {
+   "topic" :  "comedy", 
+   "isbn" : "9780316769488"   
+}
+Status code = 201 
+expected value{
+Inserted successfully
+}
+
+TEST8 : inserting a book topic already exist
+http://localhost:3000/api/book_topic  
+Method :  post 
+body {
+   "topic" :  "comedy", 
+   "isbn" : "9780316769488"   
+}
+Status code = 400 
+expected value{
+    already exist
+}
+
+TEST9 : deleting with no paramters 
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+}
+Status code = 400 
+expected value{
+    there is no criteria to delete on
+}
+
+TEST10 : deleting with a row does not exist  
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+    "topic" : "action"
+}
+Status code = 404 
+expected value{
+    nothing to delete
+}
+
+TEST11 : deleting a book doesnot exist 
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+    "isbn" : "o7"
+}
+Status code = 404 
+expected value{
+    the book does not exist
+}
+
+TEST11 : deleting all  books with some topic 
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+    "topic" : "action"
+}
+Status code = 200 
+expected value{
+    delete successfully
+}
+
+TEST12 : deleting all  topics for some book 
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+    "isbn" : "9780140268867"
+}
+Status code = 200 
+expected value{
+    delete successfully
+}
+
+TEST13 : deleting specfic  book with topic
+http://localhost:3000/api/book_topic  
+Method :  delete 
+body {
+    "isbn" : "9780140268867" , 
+    "topic" : "comedy"
+}
+Status code = 200 
+expected value{
+    delete successfully
+}

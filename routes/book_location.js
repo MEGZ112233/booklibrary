@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const { searchBook, searchLocation } = require('../utils/helper');
+const { searchBook, searchLocation, searchBookLocation } = require('../utils/helper');
 const CustomError = require('../utils/CustomError');
 router.post('/book_location', async (req, res) => {
     const { title, author, isbn, location_id } = req.body;
@@ -21,8 +21,8 @@ router.post('/book_location', async (req, res) => {
         res.status(201).send('Inserted successfully');
     } catch (err) {
         if (err instanceof CustomError) {
-            res.status(err.statusCode).send(err.message) ; 
-        } else{
+            res.status(err.statusCode).send(err.message);
+        } else {
             res.status(500).send(err.message);
         }
     }
@@ -51,14 +51,13 @@ router.delete('/book_location', async (req, res) => {
         const query = 'DELETE FROM book_location WHERE book_id = $1 AND location_id = $2';
         const values = [book_id, location_id];
         await pool.query(query, values);
-        res.status(201).send('deleted  successfully');
+        res.status(201).send('Deleted  successfully');
     } catch (err) {
         if (err instanceof CustomError) {
-            res.status(err.statusCode).send(err.message) ; 
-        } else{
+            res.status(err.statusCode).send(err.message);
+        } else {
             res.status(500).send(err.message);
         }
     }
 });
-
 module.exports = router; 
