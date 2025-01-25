@@ -112,15 +112,30 @@ async function bookExists(title, author, isbn) {
     // return id if it's exist return -1 if doesnot exist 
     try {
         const resultBook = await searchBook(title, author, isbn, 1);
-        if (resultBook.length !== 0){
-            return resultBook[0].book_id ; 
-        }else return -1  ; 
+        if (resultBook.length !== 0) {
+            return resultBook[0].book_id;
+        } else return -1;
     } catch (err) {
         if (err instanceof CustomError) throw err;
         else {
             console.error(err.message);
             throw new CustomError('Error occurred at checking existence book', 500);
         }
+    }
+}
+async function borrowerSearch(national_id = -1) {
+    try {
+        let query = 'SELECT * FROM borrower WHERE 1 = 1';
+        const values = [];
+        if (national_id !== -1) {
+            values.push(national_id);
+            query += ' AND national_id =  $1';
+        }
+        const result = await pool.query(query, values);
+        return result.rows;
+    } catch (err) {
+        if (err instanceof CustomError) throw err;
+        throw new CustomError(err.message, 500);
     }
 }
 module.exports = {
@@ -130,5 +145,6 @@ module.exports = {
     searchLocation,
     searchBookLocation,
     searchBookTopic,
-    bookExists
+    bookExists,
+    borrowerSearch
 };
