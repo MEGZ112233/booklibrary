@@ -138,6 +138,32 @@ async function borrowerSearch(national_id = -1) {
         throw new CustomError(err.message, 500);
     }
 }
+async function transactionSearch(national_id = -1, book_id = -1, limit = 1) {
+    try {
+        let query = 'SELECT * FROM borrowing_transaction WHERE 1 = 1';
+        const values = [];
+        if (national_id !== -1) {
+            values.push(national_id);
+            query += ' AND national_id =  $' + values.length;
+        }
+        if (book_id !== -1) {
+            values.push(book_id);
+            query += ' AND book_id =  $' + values.length;
+        }
+        values.push(limit);
+        query += ' LIMIT $' + values.length;
+        const result = await pool.query(query, values);
+        return result.rows;
+    } catch (err) {
+        if (err instanceof CustomError) throw err;
+        throw new CustomError(err.message, 500);
+    }
+}
+function addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result.toISOString().split('T')[0];
+}
 module.exports = {
     validateFields,
     checkInteger,
@@ -146,5 +172,7 @@ module.exports = {
     searchBookLocation,
     searchBookTopic,
     bookExists,
-    borrowerSearch
+    borrowerSearch,
+    addDays,
+    transactionSearch
 };
