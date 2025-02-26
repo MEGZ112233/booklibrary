@@ -17,9 +17,9 @@ DB_NAME=your_db_name
 DB_PASSWORD=your_password
 DB_PORT=your_db_port
 PORT=3000
+```
 
-
-# API Endpoints  
+## API Endpoints  
 
 All endpoints are prefixed with `/api`.  
 
