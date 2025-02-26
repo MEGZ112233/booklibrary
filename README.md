@@ -9,3 +9,14 @@ A simple Node.js/Express REST API for managing books, borrowers, and transaction
    git clone https://github.com/MEGZ112233/booklibrary.git
    cd booklibrary
    npm install
+2.  **Configure Environment: Create a .env file with:**
+``` bash
+DB_USER=your_username
+DB_HOST=your_host
+DB_NAME=your_db_name
+DB_PASSWORD=your_password
+DB_PORT=your_db_port
+PORT=3000
+
+نسخ
+تحرير
