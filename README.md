@@ -18,5 +18,15 @@ DB_PASSWORD=your_password
 DB_PORT=your_db_port
 PORT=3000
 
-نسخ
-تحرير
+
+# API Endpoints  
+
+All endpoints are prefixed with `/api`.  
+
+### Available Endpoints:  
+- `/api/books`  
+- `/api/locations`  
+- `/api/book_locations`  
+- `/api/book_topics`  
+- `/api/borrowers`  
+- `/api/borrowing_transactions`  
